@@ -56,7 +56,6 @@ def update(formula, assets, value):
     version = release_version(value)
     archives = verified_archives(assets, version)
     contents = formula.read_text(encoding="utf-8")
-    contents = replace_section(contents, "VERSION", f'  version "{version}"\n')
     contents = replace_section(contents, "RELEASE", release_block(version, archives))
     formula.write_text(contents, encoding="utf-8")
 

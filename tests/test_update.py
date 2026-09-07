@@ -30,7 +30,8 @@ class ReleaseVerification(unittest.TestCase):
     def test_verified_release_keeps_head_build(self):
         UPDATER["update"](self.formula, self.directory, "v0.1.0-alpha.1")
         formula = self.formula.read_text()
-        self.assertIn('version "0.1.0-alpha.1"', formula)
+        self.assertEqual(formula.count("/releases/download/v0.1.0-alpha.1/"), 4)
+        self.assertNotIn('  version "', formula)
         self.assertEqual(formula.count("      sha256 "), 4)
         self.assertIn("  head do", formula)
         UPDATER["update"](self.formula, self.directory, "v0.1.0-alpha.1")
