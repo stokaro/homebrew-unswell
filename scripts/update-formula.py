@@ -14,6 +14,12 @@ def release_version(value):
     return version
 
 
+def version_key(value):
+    core, _, suffix = release_version(value).partition("-")
+    identifiers = tuple((0, int(part)) if part.isdigit() else (1, part) for part in suffix.split("."))
+    return tuple(map(int, core.split("."))), not suffix, identifiers
+
+
 def verified_archives(assets, version):
     sums = {}
     for line in (assets / "SHA256SUMS").read_text(encoding="utf-8").splitlines():
@@ -56,6 +62,9 @@ def update(formula, assets, value):
     version = release_version(value)
     archives = verified_archives(assets, version)
     contents = formula.read_text(encoding="utf-8")
+    previous = re.findall(r"/releases/download/v([^/]+)/", contents)
+    if any(version_key(version) < version_key(old) for old in previous):
+        raise ValueError("Automatic release updates cannot downgrade the formula")
     contents = replace_section(contents, "RELEASE", release_block(version, archives))
     formula.write_text(contents, encoding="utf-8")
 

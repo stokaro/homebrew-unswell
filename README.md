@@ -27,13 +27,21 @@ for global context sets, language overrides and reasoned exceptions.
 
 ## Release updates
 
-Run the `Update formula` workflow with an existing Unswell release tag. It downloads
-all four Unix archives and their checksum manifest, verifies every archive, and
-pushes a versioned formula branch. It starts installation CI and provides a comparison
-link for creating the update pull request. This works with the default read-only
-token policy and needs no permission for Actions to approve pull requests.
-No checksum is inferred or replaced with a placeholder. Review and merge only
-after installation tests pass.
+A successful Unswell release requests an update automatically. The `Update formula`
+workflow also accepts an existing release tag manually. It downloads all four Unix
+archives and their checksum manifest, verifies every archive, and creates a PR
+through the publish app. Repeated requests reuse the same branch only when its
+contents match the verified formula; unrelated edits stop the update.
+
+GitHub automatically squash-merges the PR after the four required native
+installation checks pass. Only the publish app is exempt from manual approval;
+other authors still require one approving review. Checks and conversation
+resolution remain required. The workflow never uses an administrator merge.
+
+The organization variable `PUBLISH_APP_ID` and secret `PUBLISH_APP_KEY` must be
+available to this repository. The installed app needs Contents and Pull requests
+write access. Enable repository auto-merge and add only the publish app to main's
+review bypass list. GitHub Actions does not need permission to approve PRs.
 
 For a local update with already downloaded release assets:
 
