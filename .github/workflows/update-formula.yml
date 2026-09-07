@@ -1,0 +1,36 @@
+name: Update formula
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Existing Unswell release tag, such as v0.1.0-alpha.1
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  update:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Validate the release identifier
+        run: python3 scripts/update-formula.py --help >/dev/null && python3 -c 'import os, runpy; runpy.run_path("scripts/update-formula.py")["release_version"](os.environ["RELEASE_VERSION"])'
+      - name: Download published assets
+        run: |
+          gh release download "$RELEASE_VERSION" --repo stokaro/unswell --dir artifacts/release \
+            --pattern SHA256SUMS --pattern '*_darwin_*.tar.gz' --pattern '*_linux_*.tar.gz'
+      - name: Verify checksums and update the formula
+        run: python3 scripts/update-formula.py "$RELEASE_VERSION" --assets artifacts/release
+      - name: Open an update pull request and start its installation checks
+        run: python3 scripts/open-update-pr.py

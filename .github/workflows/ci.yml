@@ -1,0 +1,51 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  install:
+    name: Install (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - uses: Homebrew/actions/setup-homebrew@f8d4222eb633e65c2a0157383cf80861fc7fae7f
+        with:
+          stable: true
+      - name: Test the release updater
+        run: python3 -m unittest discover -s tests
+      - name: Audit the formula
+        run: |
+          brew style stokaro/unswell/unswell
+          brew audit --strict stokaro/unswell/unswell
+      - name: Install the selected formula
+        shell: bash
+        run: |
+          info=$(brew info --json=v2 stokaro/unswell/unswell)
+          if jq --exit-status '.formulae[0].versions.stable != null' <<<"$info"; then
+            brew install stokaro/unswell/unswell
+          else
+            brew install --HEAD stokaro/unswell/unswell
+          fi
+      - name: Test installed pass, failure and malformed-source outcomes
+        run: brew test stokaro/unswell/unswell
+      - name: Check this tap using the installed tool
+        run: |
+          mkdir -p artifacts
+          unswell check . --config .unswell.yaml --report json:artifacts/dogfood.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: install-evidence-${{ matrix.os }}
+          path: artifacts/
+          if-no-files-found: ignore
