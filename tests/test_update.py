@@ -1,6 +1,7 @@
 """Verify release assets are checked before changing the install formula."""
 
 import hashlib
+import re
 import runpy
 import tempfile
 import unittest
@@ -16,6 +17,8 @@ class ReleaseVerification(unittest.TestCase):
         self.directory = Path(self.temporary.name)
         self.formula = self.directory / "unswell.rb"
         self.original = (Path(__file__).parents[1] / "Formula/unswell.rb").read_text()
+        self.original = re.sub(r"/releases/download/v[^/]+/unswell_[^/]+?_(darwin|linux)_",
+                               r"/releases/download/v0.1.0-alpha.1/unswell_0.1.0-alpha.1_\1_", self.original)
         self.formula.write_text(self.original)
         entries = []
         for platform in ("darwin", "linux"):
@@ -56,6 +59,13 @@ class ReleaseVerification(unittest.TestCase):
         for version in ("latest", "main", "../1.2.3", "1.2.3\n", "1.2.3; echo changed"):
             with self.subTest(version=version), self.assertRaises(ValueError):
                 UPDATER["release_version"](version)
+
+    def test_release_order_does_not_downgrade_stable_or_numeric_prereleases(self):
+        versions = ["0.1.0-alpha.1", "0.1.0-alpha.2", "0.1.0-alpha.10", "0.1.0", "0.2.0-alpha.1"]
+        self.assertEqual(sorted(reversed(versions), key=UPDATER["version_key"]), versions)
+        self.formula.write_text(self.original.replace("v0.1.0-alpha.1/", "v0.2.0/"))
+        with self.assertRaisesRegex(ValueError, "downgrade"):
+            UPDATER["update"](self.formula, self.directory, "0.1.0-alpha.1")
 
 
 if __name__ == "__main__":
