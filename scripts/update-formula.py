@@ -37,7 +37,7 @@ def verified_archives(assets, version):
 
 
 def release_block(version, archives):
-    lines = [f'  version "{version}"', ""]
+    lines = [f'  version "{version}"', '  license "MIT"', ""]
     for platform, selector in (("darwin", "on_macos"), ("linux", "on_linux")):
         lines.append(f"  {selector} do")
         for architecture, cpu in (("arm64", "on_arm"), ("amd64", "on_intel")):

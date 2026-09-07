@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Open a reviewed formula update and explicitly start its CI workflow."""
+"""Prepare a formula update branch and explicitly start its CI workflow."""
 
 import os
 import runpy
@@ -28,12 +28,11 @@ def main():
     run("git", "add", "Formula/unswell.rb")
     run("git", "commit", "-m", f"Update Unswell formula to {version}")
     run("git", "push", "origin", branch)
-    body = Path("artifacts/pr-body.md")
-    body.write_text(f"Install the published Unswell {version} archives. "
-                    "All four archive checksums were verified before generating this formula.\n")
-    run("gh", "pr", "create", "--base", "main", "--head", branch,
-        "--title", f"Update Unswell to {version}", "--body-file", str(body))
     run("gh", "workflow", "run", "ci.yml", "--ref", branch)
+    comparison = f"https://github.com/stokaro/homebrew-unswell/compare/main...{branch}?expand=1"
+    with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as summary:
+        summary.write(f"Verified Unswell {version} archives and started installation CI.\n\n")
+        summary.write(f"[Create the formula update pull request]({comparison}).\n")
 
 
 if __name__ == "__main__":

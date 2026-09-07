@@ -30,8 +30,11 @@ for global context sets, language overrides and reasoned exceptions.
 
 Run the `Update formula` workflow with an existing Unswell release tag. It downloads
 all four Unix archives and their checksum manifest, verifies every archive, and
-opens a pull request with the versioned formula. No checksum is inferred or replaced
-with a placeholder. Review and merge only after installation tests pass.
+pushes a versioned formula branch. It starts installation CI and provides a comparison
+link for creating the update pull request. This works with the default read-only
+token policy and needs no permission for Actions to approve pull requests.
+No checksum is inferred or replaced with a placeholder. Review and merge only
+after installation tests pass.
 
 For a local update with already downloaded release assets:
 

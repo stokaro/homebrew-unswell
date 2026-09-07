@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
       actions: write
     env:
       RELEASE_VERSION: ${{ inputs.version }}
@@ -32,5 +31,5 @@ jobs:
             --pattern SHA256SUMS --pattern '*_darwin_*.tar.gz' --pattern '*_linux_*.tar.gz'
       - name: Verify checksums and update the formula
         run: python3 scripts/update-formula.py "$RELEASE_VERSION" --assets artifacts/release
-      - name: Open an update pull request and start its installation checks
-        run: python3 scripts/open-update-pr.py
+      - name: Prepare the update branch and start its installation checks
+        run: python3 scripts/prepare-update.py
