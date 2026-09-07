@@ -4,17 +4,16 @@
 and documents. It was created to reduce AI-style wording and keep formulaic AI
 phrases from leaking into comments, strings and documentation.
 
-Until the first release archives are published, install the development version:
+Install the first alpha release:
 
 ```sh
-brew install --HEAD stokaro/unswell/unswell
+brew install stokaro/unswell/unswell
 brew test stokaro/unswell/unswell
 ```
 
-This builds the public `main` branch with Go. It is a development build, so pin a
-release once the first versioned formula is available. After that update, use
-`brew install stokaro/unswell/unswell` for the verified release archives on macOS
-or Linux, with ARM64 and AMD64 packages selected for the host.
+The formula verifies the published `0.1.0-alpha.1` archive for the host: macOS or
+Linux, with ARM64 or AMD64. Use `brew install --HEAD stokaro/unswell/unswell` to
+build the public `main` branch with Go instead.
 
 ```sh
 unswell check . --config .unswell.yaml

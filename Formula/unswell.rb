@@ -1,9 +1,6 @@
 class Unswell < Formula
   desc "Reduce AI-style wording in source code and documentation"
   homepage "https://github.com/stokaro/unswell"
-  # BEGIN VERSION
-  version "0.1.0-alpha.1"
-  # END VERSION
   license "MIT"
 
   head do
