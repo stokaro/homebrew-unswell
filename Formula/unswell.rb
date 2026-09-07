@@ -1,9 +1,9 @@
 class Unswell < Formula
   desc "Reduce AI-style wording in source code and documentation"
   homepage "https://github.com/stokaro/unswell"
-  # BEGIN RELEASE
+  # BEGIN VERSION
+  # END VERSION
   license "MIT"
-  # END RELEASE
 
   head do
     url "https://github.com/stokaro/unswell.git", branch: "main"
@@ -11,6 +11,9 @@ class Unswell < Formula
   end
 
   depends_on "git"
+
+  # BEGIN RELEASE
+  # END RELEASE
 
   def install
     if build.head?

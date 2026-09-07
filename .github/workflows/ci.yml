@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   install:
     name: Install (${{ matrix.os }})
@@ -23,10 +26,13 @@ jobs:
         with:
           stable: true
       - name: Test the release updater
-        run: python3 -m unittest discover -s tests
+        run: |
+          python3 -m unittest discover -s tests
+          python3 tests/render_fixture.py
       - name: Audit the formula
         run: |
           brew style stokaro/unswell/unswell
+          brew style artifacts/Formula/unswell.rb
           brew audit --strict stokaro/unswell/unswell
       - name: Install the selected formula
         shell: bash

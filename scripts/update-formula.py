@@ -37,7 +37,7 @@ def verified_archives(assets, version):
 
 
 def release_block(version, archives):
-    lines = [f'  version "{version}"', '  license "MIT"', ""]
+    lines = []
     for platform, selector in (("darwin", "on_macos"), ("linux", "on_linux")):
         lines.append(f"  {selector} do")
         for architecture, cpu in (("arm64", "on_arm"), ("amd64", "on_intel")):
@@ -56,12 +56,20 @@ def update(formula, assets, value):
     version = release_version(value)
     archives = verified_archives(assets, version)
     contents = formula.read_text(encoding="utf-8")
-    begin, end = "  # BEGIN RELEASE\n", "  # END RELEASE\n"
+    contents = replace_section(contents, "VERSION", f'  version "{version}"\n')
+    contents = replace_section(contents, "RELEASE", release_block(version, archives))
+    formula.write_text(contents, encoding="utf-8")
+
+
+def replace_section(contents, section, value):
+    begin, end = f"  # BEGIN {section}\n", f"  # END {section}\n"
     if contents.count(begin) != 1 or contents.count(end) != 1:
         raise ValueError("Formula release markers are missing or repeated")
     before, rest = contents.split(begin)
+    if end not in rest:
+        raise ValueError("Formula release markers are out of order")
     _, after = rest.split(end)
-    formula.write_text(before + begin + release_block(version, archives) + end + after, encoding="utf-8")
+    return before + begin + value + end + after
 
 
 def main():
