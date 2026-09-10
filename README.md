@@ -34,7 +34,7 @@ through the publish app. Repeated requests reuse the same branch only when its
 contents match the verified formula; unrelated edits stop the update.
 
 The four required native installation checks run on that PR without anyone
-touching it, and GitHub requests review from the formula's code owners, so it
+touching it. GitHub requests review from the formula's code owners, so the update
 appears in the maintainer's review queue as soon as it exists. Main also requires
 the branch to be up to date, so when main has moved the maintainer clicks Update
 branch first and lets the checks rerun; updating dismisses an earlier approval,
