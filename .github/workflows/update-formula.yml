@@ -43,7 +43,7 @@ jobs:
           private-key: ${{ secrets.PUBLISH_APP_KEY }}
           permission-contents: write
           permission-pull-requests: write
-      - name: Create the verified update PR and request automatic merge
+      - name: Create the verified update PR
         env:
           GH_TOKEN: ${{ steps.publish.outputs.token }}
           PUBLISH_APP_SLUG: ${{ steps.publish.outputs.app-slug }}

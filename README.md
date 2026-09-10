@@ -33,15 +33,21 @@ archives and their checksum manifest, verifies every archive, and creates a PR
 through the publish app. Repeated requests reuse the same branch only when its
 contents match the verified formula; unrelated edits stop the update.
 
-GitHub automatically squash-merges the PR after the four required native
-installation checks pass. Only the publish app is exempt from manual approval;
-other authors still require one approving review. Checks and conversation
-resolution remain required. The workflow never uses an administrator merge.
+The four required native installation checks run on that PR without anyone
+touching it, and GitHub requests review from the formula's code owners, so it
+appears in the maintainer's review queue as soon as it exists. Main also requires
+the branch to be up to date, so when main has moved the maintainer clicks Update
+branch first and lets the checks rerun; updating dismisses an earlier approval,
+so update before approving. The maintainer then approves and squash-merges. The
+publish app has no review exception: it needs one approving review like every
+other author, and required checks, conversation resolution, the up-to-date branch
+requirement and linear history stay in force. The workflow never merges, and it
+never uses an administrator merge.
 
 The organization variable `PUBLISH_APP_ID` and secret `PUBLISH_APP_KEY` must be
-available to this repository. The installed app needs Contents and Pull requests
-write access. Enable repository auto-merge and add only the publish app to main's
-review bypass list. GitHub Actions does not need permission to approve PRs.
+available to this repository, and the installed app needs Contents and Pull
+requests write access. Repository auto-merge stays disabled and main's review
+bypass list stays empty. GitHub Actions does not need permission to approve PRs.
 
 For a local update with already downloaded release assets:
 

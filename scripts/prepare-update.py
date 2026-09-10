@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a formula PR with the publish app and merge after required checks."""
+"""Create a formula PR with the publish app and leave it for maintainer review."""
 
 import json
 import os
@@ -61,23 +61,22 @@ def main():
         body = Path(os.environ["RUNNER_TEMP"]) / "formula-pr.md"
         body.write_text(f"Update the formula to [Unswell v{version}](https://github.com/stokaro/unswell/releases/tag/v{version}).\n\n"
                         "All four Unix archives match the published SHA-256 manifest. "
-                        "GitHub must pass the four required installation checks before automatic squash merge.\n")
+                        "The four required installation checks must pass. A maintainer then approves "
+                        "and squash-merges this pull request, updating the branch first when main has "
+                        "moved, because an update dismisses an earlier approval.\n")
         number = run("gh", "pr", "create", "--repo", REPOSITORY, "--base", "main", "--head", branch,
                      "--title", f"Update Unswell formula to {version}", "--body-file", str(body)).rsplit("/", 1)[-1]
     else:
         number = str(pulls[0]["number"])
     pull = json.loads(run("gh", "pr", "view", number, "--repo", REPOSITORY, "--json",
-                          "baseRefName,headRefName,headRefOid,author,isCrossRepository,mergeStateStatus"))
+                          "baseRefName,headRefName,headRefOid,author,isCrossRepository"))
     validate_pull(pull, branch, "app/" + os.environ["PUBLISH_APP_SLUG"])
     if pull["headRefOid"] != head:
         raise ValueError("The PR head changed while preparing the update")
-    if pull["mergeStateStatus"] == "BEHIND":
-        run("gh", "api", "--method", "PUT", f"repos/{REPOSITORY}/pulls/{number}/update-branch",
-            "-f", f"expected_head_sha={head}")
-        head = run("gh", "pr", "view", number, "--repo", REPOSITORY, "--json", "headRefOid", "--jq", ".headRefOid")
-    run("gh", "pr", "merge", number, "--repo", REPOSITORY, "--auto", "--squash", "--match-head-commit", head)
     with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as summary:
-        summary.write(f"[Formula update PR](https://github.com/{REPOSITORY}/pull/{number}) submitted for automatic merge after required checks.\n")
+        summary.write(f"[Formula update PR](https://github.com/{REPOSITORY}/pull/{number}) opened for review. "
+                      "Update its branch if main has moved, then approve and squash-merge it once the "
+                      "four required installation checks pass.\n")
 
 
 if __name__ == "__main__":

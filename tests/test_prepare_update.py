@@ -1,4 +1,4 @@
-"""Reject unrelated changes and foreign PRs before requesting automatic merge."""
+"""Reject unrelated changes and foreign PRs before opening the update for review."""
 
 import runpy
 import unittest
