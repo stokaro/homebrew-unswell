@@ -13,23 +13,23 @@ class Unswell < Formula
   # BEGIN RELEASE
   on_macos do
     on_arm do
-      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.15/unswell_0.1.0-alpha.15_darwin_arm64.tar.gz"
-      sha256 "f95e66daad0f41377b6c3ff4864c03d9e5c7beb41e71d1cf9e13333271036e56"
+      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.17/unswell_0.1.0-alpha.17_darwin_arm64.tar.gz"
+      sha256 "d385a351168aa8cb4ee72ac7b8b98025317f8f95924f6e8da635ffe18bf70890"
     end
     on_intel do
-      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.15/unswell_0.1.0-alpha.15_darwin_amd64.tar.gz"
-      sha256 "540b0fc7448de67b38f620b2643def910b749bd274f8a9e1997ad46b9654b26d"
+      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.17/unswell_0.1.0-alpha.17_darwin_amd64.tar.gz"
+      sha256 "67efac0cc7a256201ade0ef7a4d2ffa48f4815ea32ae4104817ef3897396ecd1"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.15/unswell_0.1.0-alpha.15_linux_arm64.tar.gz"
-      sha256 "5666b61419c8bfa8d24328b5771722d3fb99424efb0868656cf8dd3ed0c46b7c"
+      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.17/unswell_0.1.0-alpha.17_linux_arm64.tar.gz"
+      sha256 "979bb9ca435b8800d459b52b3561211a15407d51cf183c398b2cba0c96cf06cd"
     end
     on_intel do
-      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.15/unswell_0.1.0-alpha.15_linux_amd64.tar.gz"
-      sha256 "7e2e51f7c44a2a37d6975282f526613425318252c5b324d41f777af9bbeac4f9"
+      url "https://github.com/stokaro/unswell/releases/download/v0.1.0-alpha.17/unswell_0.1.0-alpha.17_linux_amd64.tar.gz"
+      sha256 "1433c564184ea7b4fa8075f25894654cd04a4cda2b15de7b7e15f42dae53432a"
     end
   end
   # END RELEASE
